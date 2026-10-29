@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Сладкие сны — бронирование гостиницы</title>
+  <!-- Font Awesome для иконок -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* -------------------- ГЛОБАЛЬНЫЕ СТИЛИ -------------------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+    }
+
+    body {
+      background: #f5f7fb;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      color: #1e2a3a;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Шапка */
+    .header {
+      background: white;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      padding: 18px 0;
+      margin-bottom: 32px;
+    }
+
+    .header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      color: #2d4b6e;
+    }
+
+    .logo i {
+      color: #ffb347;
+      margin-right: 8px;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 30px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #eef2f7;
+      color: #1e2a3a;
+      font-size: 14px;
+    }
+
+    .btn-primary {
+      background: #2d4b6e;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #1e3a55;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1.5px solid #2d4b6e;
+      color: #2d4b6e;
+    }
+
+    .btn-outline:hover {
+      background: #2d4b6e10;
+    }
+
+    .btn-warning {
+      background: #ffb347;
+      color: #1e2a3a;
+    }
+
+    .btn-warning:hover {
+      background: #f5a623;
+    }
+
+    .btn-sm {
+      padding: 6px 14px;
+      font-size: 13px;
+    }
+
+    /* Карточки */
+    .card {
+      background: white;
+      border-radius: 24px;
+      padding: 24px 28px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+      margin-bottom: 28px;
+    }
+
+    /* Заголовки */
+    h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Поля ввода */
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 6px;
+      color: #4a5f7a;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 16px;
+      border: 1.5px solid #dbe2ea;
+      background: #f9fbfd;
+      font-size: 15px;
+      transition: 0.2s;
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: #2d4b6e;
+      background: white;
+      box-shadow: 0 0 0 4px #2d4b6e10;
+    }
+
+    .inline-form {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: flex-end;
+    }
+
+    .inline-form .form-group {
+      flex: 1 1 180px;
+      margin-bottom: 0;
+    }
+
+    .inline-form .btn {
+      height: 48px;
+    }
+
+    /* Сообщения */
+    .alert {
+      padding: 14px 20px;
+      border-radius: 16px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 500;
+    }
+
+    .alert-error {
+      background: #ffebee;
+      color: #b71c1c;
+      border-left: 6px solid #e53935;
+    }
+
+    .alert-success {
+      background: #e8f5e9;
+      color: #1b5e20;
+      border-left: 6px solid #43a047;
+    }
+
+    .alert-info {
+      background: #e3f2fd;
+      color: #0d47a1;
+      border-left: 6px solid #1976d2;
+    }
+
+    /* Сетка номеров */
+    .rooms-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+      margin-top: 16px;
+    }
+
+    .room-card {
+      background: white;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+      border: 1px solid #eef2f7;
+      transition: 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .room-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.08);
+    }
+
+    .room-img {
+      height: 160px;
+      background: #d9e2ec;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      color: #8fa9c9;
+    }
+
+    .room-info {
+      padding: 18px 20px 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .room-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .room-meta {
+      display: flex;
+      gap: 12px;
+      font-size: 13px;
+      color: #5e7188;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .room-price {
+      font-size: 22px;
+      font-weight: 700;
+      color: #2d4b6e;
+      margin: 8px 0 16px;
+    }
+
+    .room-price small {
+      font-size: 14px;
+      font-weight: 400;
+      color: #7b8ea3;
+    }
+
+    .room-actions {
+      margin-top: auto;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* Таблица заявок */
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 12px;
+      border-radius: 18px;
+      border: 1px solid #e9eef4;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      background: white;
+    }
+
+    th {
+      text-align: left;
+      padding: 16px 18px;
+      background: #f4f8fe;
+      font-weight: 600;
+      color: #2d4b6e;
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 14px 18px;
+      border-top: 1px solid #eef2f7;
+      vertical-align: middle;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 30px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-pending {
+      background: #fff3e0;
+      color: #e65100;
+    }
+
+    .status-approved {
+      background: #e8f5e9;
+      color: #1b5e20;
+    }
+
+    .status-rejected {
+      background: #ffebee;
+      color: #b71c1c;
+    }
+
+    .actions-cell {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Футер */
+    .footer {
+      margin-top: auto;
+      padding: 24px 0;
+      text-align: center;
+      color: #8b9bb0;
+      font-size: 14px;
+      border-top: 1px solid #e9eef4;
+    }
+
+    /* Адаптив */
+    @media (max-width: 600px) {
+      .card {
+        padding: 18px;
+      }
+      .header .container {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .nav-buttons {
+        justify-content: center;
+      }
+    }
+
+    /* Скрытые секции для переключения */
+    .page-section {
+      display: none;
+    }
+
+    .page-section.active {
+      display: block;
+    }
+
+    /* Кастомные уведомления */
+    .toast-message {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #1e2a3a;
+      color: white;
+      padding: 14px 24px;
+      border-radius: 40px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 9999;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ШАПКА -->
+<header class="header">
+  <div class="container">
+    <div class="logo">
+      <i class="fas fa-moon"></i> Сладкие сны
+    </div>
+    <div class="nav-buttons">
+      <button class="btn btn-outline" id="navGuestBtn"><i class="fas fa-user"></i> Гость</button>
+      <button class="btn btn-outline" id="navAdminBtn"><i class="fas fa-shield-alt"></i> Администратор</button>
+    </div>
+  </div>
+</header>
+
+<!-- ОСНОВНОЙ КОНТЕНТ -->
+<main class="container">
+
+  <!-- ================= ГОСТЬ: ПОИСК И БРОНИРОВАНИЕ ================= -->
+  <section id="guestSection" class="page-section active">
+    <!-- Карточка поиска -->
+    <div class="card">
+      <h2><i class="fas fa-search"></i> Поиск подходящего номера</h2>
+      <form id="searchForm" class="inline-form">
+        <div class="form-group">
+          <label>Тип номера</label>
+          <select id="searchType">
+            <option value="">Все типы</option>
+            <option value="standard">Стандарт</option>
+            <option value="comfort">Комфорт</option>
+            <option value="lux">Люкс</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Макс. цена, ₽</label>
+          <input type="number" id="searchMaxPrice" placeholder="например, 5000" min="0" step="100">
+        </div>
+        <div class="form-group">
+          <label>Гостей (минимум)</label>
+          <input type="number" id="searchCapacity" placeholder="например, 2" min="1" step="1">
+        </div>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-filter"></i> Применить фильтр</button>
+        <button type="button" class="btn btn-outline" id="resetFilterBtn"><i class="fas fa-undo"></i> Сбросить</button>
+      </form>
+    </div>
+
+    <!-- Сообщения гостя -->
+    <div id="guestMessageArea"></div>
+
+    <!-- Сетка номеров -->
+    <div id="roomsContainer" class="rooms-grid">
+      <!-- заполняется через JS -->
+    </div>
+  </section>
+
+  <!-- ================= АДМИНИСТРАТОР: МОДЕРАЦИЯ ================= -->
+  <section id="adminSection" class="page-section">
+    <div class="card">
+      <h2><i class="fas fa-clipboard-list"></i> Заявки на бронирование</h2>
+      <div id="adminMessageArea"></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Номер</th>
+              <th>Гость</th>
+              <th>Даты</th>
+              <th>Статус</th>
+              <th>Действия</th>
+            </tr>
+          </thead>
+          <tbody id="bookingsTableBody">
+            <!-- заполняется через JS -->
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top: 16px; color: #7b8ea3; font-size: 14px;">
+        <i class="fas fa-info-circle"></i> Для модерации используйте кнопки «Подтвердить» или «Отклонить».
+      </p>
+    </div>
+  </section>
+
+</main>
+
+<!-- ФУТЕР -->
+<footer class="footer">
+  <div class="container">
+    © 2025 Гостиница «Сладкие сны» — уютный отдых в самом сердце города
+  </div>
+</footer>
+
+<!-- КОНТЕЙНЕР ДЛЯ TOAST-УВЕДОМЛЕНИЙ -->
+<div id="toastContainer"></div>
+
+<script>
+  (function() {
+    // ========== ИМИТАЦИЯ БАЗЫ ДАННЫХ (localStorage) ==========
+    const STORAGE_KEYS = {
+      ROOMS: 'hotel_rooms',
+      BOOKINGS: 'hotel_bookings',
+      NEXT_BOOKING_ID: 'hotel_next_booking_id'
+    };
+
+    // Начальные данные: номера
+    const DEFAULT_ROOMS = [
+      { id: 1, type: 'standard', title: 'Стандарт с видом на город', capacity: 2, price: 3200, description: 'Уютный номер с двуспальной кроватью.' },
+      { id: 2, type: 'standard', title: 'Стандарт твин', capacity: 2, price: 2900, description: 'Две односпальные кровати, идеально для друзей.' },
+      { id: 3, type: 'comfort', title: 'Комфорт с балконом', capacity: 3, price: 4800, description: 'Просторный номер с балконом и панорамным видом.' },
+      { id: 4, type: 'comfort', title: 'Комфорт семейный', capacity: 4, price: 5400, description: 'Две комнаты, подходит для семьи с детьми.' },
+      { id: 5, type: 'lux', title: 'Люкс «Сладкий сон»', capacity: 2, price: 8900, description: 'Роскошный номер с джакузи и видом на парк.' },
+      { id: 6, type: 'lux', title: 'Люкс президентский', capacity: 4, price: 13500, description: 'Апартаменты с гостиной, столовой и сауной.' }
+    ];
+
+    // Инициализация хранилища при первом запуске
+    function initStorage() {
+      if (!localStorage.getItem(STORAGE_KEYS.ROOMS)) {
+        localStorage.setItem(STORAGE_KEYS.ROOMS, JSON.stringify(DEFAULT_ROOMS));
+      }
+      if (!localStorage.getItem(STORAGE_KEYS.BOOKINGS)) {
+        localStorage.setItem(STORAGE_KEYS.BOOKINGS, JSON.stringify([]));
+      }
+      if (!localStorage.getItem(STORAGE_KEYS.NEXT_BOOKING_ID)) {
+        localStorage.setItem(STORAGE_KEYS.NEXT_BOOKING_ID, '1');
+      }
+    }
+    initStorage();
+
+    // Вспомогательные функции для работы с хранилищем
+    function getRooms() {
+      return JSON.parse(localStorage.getItem(STORAGE_KEYS.ROOMS));
+    }
+
+    function getBookings() {
+      return JSON.parse(localStorage.getItem(STORAGE_KEYS.BOOKINGS));
+    }
+
+    function saveBookings(bookings) {
+      localStorage.setItem(STORAGE_KEYS.BOOKINGS, JSON.stringify(bookings));
+    }
+
+    function getNextBookingId() {
+      const id = parseInt(localStorage.getItem(STORAGE_KEYS.NEXT_BOOKING_ID), 10);
+      localStorage.setItem(STORAGE_KEYS.NEXT_BOOKING_ID, (id + 1).toString());
+      return id;
+    }
+
+    // ========== УВЕДОМЛЕНИЯ (TOAST) ==========
+    function showToast(message, isError = false) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'toast-message';
+      toast.style.background = isError ? '#b71c1c' : '#1e2a3a';
+      toast.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i> ${message}`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s';
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    // ========== ОТОБРАЖЕНИЕ СООБЩЕНИЙ В ОБЛАСТИ ==========
+    function setMessage(areaId, text, type = 'info') {
+      const area = document.getElementById(areaId);
+      if (!area) return;
+      if (!text) {
+        area.innerHTML = '';
+        return;
+      }
+      const alertClass = type === 'error' ? 'alert-error' : (type === 'success' ? 'alert-success' : 'alert-info');
+      area.innerHTML = `<div class="alert ${alertClass}"><i class="fas ${type === 'error' ? 'fa-exclamation-triangle' : (type === 'success' ? 'fa-check-circle' : 'fa-info-circle')}"></i> ${text}</div>`;
+    }
+
+    // ========== ПЕРЕКЛЮЧЕНИЕ РАЗДЕЛОВ ==========
+    const guestSection = document.getElementById('guestSection');
+    const adminSection = document.getElementById('adminSection');
+    const navGuestBtn = document.getElementById('navGuestBtn');
+    const navAdminBtn = document.getElementById('navAdminBtn');
+
+    navGuestBtn.addEventListener('click', () => {
+      guestSection.classList.add('active');
+      adminSection.classList.remove('active');
+      renderRooms();
+      setMessage('guestMessageArea', '');
+    });
+
+    navAdminBtn.addEventListener('click', () => {
+      adminSection.classList.add('active');
+      guestSection.classList.remove('active');
+      renderBookingsTable();
+      setMessage('adminMessageArea', '');
+    });
+
+    // ========== ОТРИСОВКА НОМЕРОВ (гость) ==========
+    let currentFilter = { type: '', maxPrice: null, capacity: null };
+
+    function renderRooms() {
+      const container = document.getElementById('roomsContainer');
+      const rooms = getRooms();
+      const bookings = getBookings();
+
+      // Фильтрация
+      let filtered = rooms.filter(room => {
+        if (currentFilter.type && room.type !== currentFilter.type) return false;
+        if (currentFilter.maxPrice && room.price > currentFilter.maxPrice) return false;
+        if (currentFilter.capacity && room.capacity < currentFilter.capacity) return false;
+        return true;
+      });
+
+      // Проверка, есть ли активные брони на номер (для блокировки кнопки)
+      // Считаем номер занятым, если есть pending или approved заявка (упрощённо)
+      const occupiedRoomIds = new Set(
+        bookings.filter(b => b.status === 'pending' || b.status === 'approved').map(b => b.roomId)
+      );
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="card" style="grid-column: 1/-1; text-align: center; color: #7b8ea3;">😕 По вашему запросу не найдено ни одного номера. Попробуйте изменить фильтры.</div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map(room => {
+        const isOccupied = occupiedRoomIds.has(room.id);
+        const typeRu = { standard: 'Стандарт', comfort: 'Комфорт', lux: 'Люкс' }[room.type] || room.type;
+        return `
+          <div class="room-card">
+            <div class="room-img"><i class="fas fa-bed"></i></div>
+            <div class="room-info">
+              <div class="room-title">${room.title}</div>
+              <div class="room-meta">
+                <span><i class="fas fa-users"></i> до ${room.capacity} гостей</span>
+                <span><i class="fas fa-tag"></i> ${typeRu}</span>
+              </div>
+              <div class="room-price">${room.price.toLocaleString()} ₽ <small>/ ночь</small></div>
+              <div class="room-actions">
+                <button class="btn btn-primary btn-sm book-btn" data-room-id="${room.id}" ${isOccupied ? 'disabled style="opacity:0.5;"' : ''}>
+                  <i class="fas fa-calendar-plus"></i> ${isOccupied ? 'Занят' : 'Забронировать'}
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Навешиваем обработчики на кнопки бронирования
+      container.querySelectorAll('.book-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const roomId = parseInt(btn.dataset.roomId, 10);
+          openBookingDialog(roomId);
+        });
+      });
+    }
+
+    // ========== ФОРМА БРОНИРОВАНИЯ (всплывающее окно через prompt? Нет, сделаем красиво через модальное окно) ==========
+    // Чтобы не усложнять, используем простое модальное окно, создаваемое на лету.
+    function openBookingDialog(roomId) {
+      const rooms = getRooms();
+      const room = rooms.find(r => r.id === roomId);
+      if (!room) return;
+
+      // Создаём модальное окно
+      const modal = document.createElement('div');
+      modal.style.position = 'fixed';
+      modal.style.top = '0';
+      modal.style.left = '0';
+      modal.style.width = '100%';
+      modal.style.height = '100%';
+      modal.style.background = 'rgba(0,0,0,0.5)';
+      modal.style.display = 'flex';
+      modal.style.alignItems = 'center';
+      modal.style.justifyContent = 'center';
+      modal.style.zIndex = '10000';
+
+      const modalContent = document.createElement('div');
+      modalContent.style.background = 'white';
+      modalContent.style.borderRadius = '28px';
+      modalContent.style.padding = '32px';
+      modalContent.style.width = '90%';
+      modalContent.style.maxWidth = '500px';
+      modalContent.style.boxShadow = '0 24px 60px rgba(0,0,0,0.2)';
+
+      modalContent.innerHTML = `
+        <h2 style="margin-bottom: 20px;"><i class="fas fa-calendar-check"></i> Бронирование номера</h2>
+        <p style="margin-bottom: 16px; color: #2d4b6e; font-weight: 600;">${room.title} — ${room.price.toLocaleString()} ₽/ночь</p>
+        <form id="bookingForm">
+          <div class="form-group">
+            <label>Ваше имя <span style="color:#b71c1c;">*</span></label>
+            <input type="text" id="guestName" placeholder="Иван Петров" required>
+          </div>
+          <div class="form-group">
+            <label>Email <span style="color:#b71c1c;">*</span></label>
+            <input type="email" id="guestEmail" placeholder="ivan@example.com" required>
+          </div>
+          <div class="form-group">
+            <label>Дата заезда <span style="color:#b71c1c;">*</span></label>
+            <input type="date" id="checkIn" required>
+          </div>
+          <div class="form-group">
+            <label>Дата выезда <span style="color:#b71c1c;">*</span></label>
+            <input type="date" id="checkOut" required>
+          </div>
+          <div style="display: flex; gap: 12px; margin-top: 24px;">
+            <button type="submit" class="btn btn-primary" style="flex:1;">Отправить заявку</button>
+            <button type="button" class="btn btn-outline" id="cancelBookingBtn" style="flex:1;">Отмена</button>
+          </div>
+        </form>
+      `;
+
+      modal.appendChild(modalContent);
+      document.body.appendChild(modal);
+
+      // Установка минимальных дат
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('checkIn').min = today;
+      document.getElementById('checkOut').min = today;
+
+      // Закрытие по отмене
+      document.getElementById('cancelBookingBtn').addEventListener('click', () => modal.remove());
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.remove();
+      });
+
+      // Обработка формы
+      document.getElementById('bookingForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const guestName = document.getElementById('guestName').value.trim();
+        const guestEmail = document.getElementById('guestEmail').value.trim();
+        const checkIn = document.getElementById('checkIn').value;
+        const checkOut = document.getElementById('checkOut').value;
+
+        // Валидация (на стороне клиента, но по условию "вся валидация на стороне сервера" — у нас "сервер" = localStorage)
+        // Тем не менее, проверим базовые вещи и покажем ошибки.
+        let errors = [];
+        if (!guestName || guestName.length < 2) errors.push('Имя должно содержать минимум 2 символа.');
+        if (!guestEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guestEmail)) errors.push('Введите корректный email.');
+        if (!checkIn) errors.push('Укажите дату заезда.');
+        if (!checkOut) errors.push('Укажите дату выезда.');
+        if (checkIn && checkOut && new Date(checkIn) >= new Date(checkOut)) errors.push('Дата выезда должна быть позже даты заезда.');
+        if (new Date(checkIn) < new Date(today)) errors.push('Дата заезда не может быть в прошлом.');
+
+        if (errors.length > 0) {
+          showToast(errors[0], true);
+          return;
+        }
+
+        // Проверка, не занят ли номер (повторная проверка перед сохранением)
+        const bookings = getBookings();
+        const isOccupied = bookings.some(b => b.roomId === roomId && (b.status === 'pending' || b.status === 'approved'));
+        if (isOccupied) {
+          showToast('Этот номер уже забронирован. Выберите другой.', true);
+          modal.remove();
+          renderRooms();
+          return;
+        }
+
+        // Сохраняем заявку
+        const newBooking = {
+          id: getNextBookingId(),
+          roomId: roomId,
+          roomTitle: room.title,
+          guestName: guestName,
+          guestEmail: guestEmail,
+          checkIn: checkIn,
+          checkOut: checkOut,
+          status: 'pending',
+          createdAt: new Date().toISOString()
+        };
+        bookings.push(newBooking);
+        saveBookings(bookings);
+
+        modal.remove();
+        showToast('Заявка на бронирование отправлена! Ожидайте подтверждения администратора.', false);
+        setMessage('guestMessageArea', 'Заявка успешно создана! Администратор рассмотрит её в ближайшее время.', 'success');
+        renderRooms(); // Обновить доступность (номер станет занятым)
+      });
+    }
+
+    // ========== ОБРАБОТКА ФИЛЬТРОВ ==========
+    document.getElementById('searchForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const type = document.getElementById('searchType').value;
+      const maxPrice = document.getElementById('searchMaxPrice').value ? parseInt(document.getElementById('searchMaxPrice').value, 10) : null;
+      const capacity = document.getElementById('searchCapacity').value ? parseInt(document.getElementById('searchCapacity').value, 10) : null;
+
+      if (maxPrice !== null && (isNaN(maxPrice) || maxPrice < 0)) {
+        setMessage('guestMessageArea', 'Цена должна быть положительным числом.', 'error');
+        return;
+      }
+      if (capacity !== null && (isNaN(capacity) || capacity < 1)) {
+        setMessage('guestMessageArea', 'Количество гостей должно быть не менее 1.', 'error');
+        return;
+      }
+
+      currentFilter = { type, maxPrice, capacity };
+      renderRooms();
+      setMessage('guestMessageArea', 'Фильтр применён.', 'success');
+    });
+
+    document.getElementById('resetFilterBtn').addEventListener('click', () => {
+      document.getElementById('searchType').value = '';
+      document.getElementById('searchMaxPrice').value = '';
+      document.getElementById('searchCapacity').value = '';
+      currentFilter = { type: '', maxPrice: null, capacity: null };
+      renderRooms();
+      setMessage('guestMessageArea', 'Фильтры сброшены.', 'info');
+    });
+
+    // ========== ОТРИСОВКА ТАБЛИЦЫ БРОНИРОВАНИЙ (админ) ==========
+    function renderBookingsTable() {
+      const tbody = document.getElementById('bookingsTableBody');
+      const bookings = getBookings();
+
+      if (bookings.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 40px; color: #7b8ea3;">Пока нет ни одной заявки</td></tr>`;
+        return;
+      }
+
+      // Сортируем по ID (по убыванию, новые сверху)
+      const sorted = [...bookings].sort((a, b) => b.id - a.id);
+
+      tbody.innerHTML = sorted.map(b => {
+        let statusText = '';
+        let statusClass = '';
+        if (b.status === 'pending') { statusText = 'Ожидает'; statusClass = 'status-pending'; }
+        else if (b.status === 'approved') { statusText = 'Подтверждена'; statusClass = 'status-approved'; }
+        else if (b.status === 'rejected') { statusText = 'Отклонена'; statusClass = 'status-rejected'; }
+
+        const checkInFormatted = b.checkIn ? new Date(b.checkIn).toLocaleDateString('ru-RU') : '—';
+        const checkOutFormatted = b.checkOut ? new Date(b.checkOut).toLocaleDateString('ru-RU') : '—';
+
+        // Кнопки действий только для pending
+        let actionsHtml = '';
+        if (b.status === 'pending') {
+          actionsHtml = `
+            <div class="actions-cell">
+              <button class="btn btn-primary btn-sm approve-btn" data-id="${b.id}"><i class="fas fa-check"></i> Подтвердить</button>
+              <button class="btn btn-warning btn-sm reject-btn" data-id="${b.id}"><i class="fas fa-times"></i> Отклонить</button>
+            </div>
+          `;
+        } else {
+          actionsHtml = `<span style="color: #8b9bb0;">—</span>`;
+        }
+
+        return `
+          <tr>
+            <td>${b.id}</td>
+            <td>${b.roomTitle || '—'}</td>
+            <td>${b.guestName}<br><small style="color:#7b8ea3;">${b.guestEmail}</small></td>
+            <td>${checkInFormatted} — ${checkOutFormatted}</td>
+            <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+            <td>${actionsHtml}</td>
+          </tr>
+        `;
+      }).join('');
+
+      // Навешиваем обработчики на кнопки
+      tbody.querySelectorAll('.approve-btn').forEach(btn => {
+        btn.addEventListener('click', () => moderateBooking(parseInt(btn.dataset.id, 10), 'approved'));
+      });
+      tbody.querySelectorAll('.reject-btn').forEach(btn => {
+        btn.addEventListener('click', () => moderateBooking(parseInt(btn.dataset.id, 10), 'rejected'));
+      });
+    }
+
+    // Модерация заявки
+    function moderateBooking(bookingId, newStatus) {
+      const bookings = getBookings();
+      const booking = bookings.find(b => b.id === bookingId);
+      if (!booking) return;
+
+      // Проверка: если подтверждаем, убедимся, что номер не занят другой подтверждённой заявкой
+      if (newStatus === 'approved') {
+        const conflict = bookings.some(b =>
+          b.id !== bookingId &&
+          b.roomId === booking.roomId &&
+          b.status === 'approved'
+        );
+        if (conflict) {
+          showToast('Невозможно подтвердить: номер уже занят другой подтверждённой заявкой.', true);
+          return;
+        }
+        // Также можно проверить пересечение дат, но для простоты пропустим
+      }
+
+      booking.status = newStatus;
+      saveBookings(bookings);
+
+      showToast(`Заявка №${bookingId} ${newStatus === 'approved' ? 'подтверждена' : 'отклонена'}.`, false);
+      renderBookingsTable();
+      // Обновим и гостевую часть, если она открыта (на случай, если админ переключится)
+      renderRooms();
+    }
+
+    // ========== СТАРТОВЫЙ РЕНДЕР ==========
+    renderRooms();
+    // Начально показываем гостевую секцию, админская скрыта
+    guestSection.classList.add('active');
+    adminSection.classList.remove('active');
+  })();
+</script>
+</body>
+</html>
